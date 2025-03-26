@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Import Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #FFDEE9, #B5FFFC);
+            backdrop-filter: blur(10px);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #007BFF, #00D4FF);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #0056b3, #0098cc);
+            box-shadow: 0 5px 15px rgba(0, 122, 255, 0.3);
+        }
+
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.7);
+            color: white;
+        }
+
+        .alert-error {
+            background-color: rgba(244, 67, 54, 0.7);
+            color: white;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <div id="alert" class="alert"></div>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="loginUser()">Login</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgnBadahlAkBQ0g0X72KJVdsLebBxSBKc",
+            authDomain: "documents-88731.firebaseapp.com",
+            databaseURL: "https://documents-88731-default-rtdb.firebaseio.com/",
+            projectId: "documents-88731",
+            storageBucket: "documents-88731.appspot.com",
+            messagingSenderId: "872211037674",
+            appId: "1:872211037674:web:1d22955013e7ccfd018693",
+            measurementId: "G-6Q751M1T12"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.loginUser = async function () {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                showAlert('Please enter email and password!', 'error');
+                return;
+            }
+
+            try {
+                const dbRef = ref(database, "users");
+                const snapshot = await get(dbRef);
+                if (snapshot.exists()) {
+                    let users = snapshot.val();
+                    let validUserKey = Object.keys(users).find(key => users[key].email === email && users[key].password === password);
+
+                    if (validUserKey) {
+                        let validUser = users[validUserKey];
+                        sessionStorage.setItem("loggedUser", JSON.stringify(validUser));
+
+                        showAlert('Login successful!', 'success');
+                        setTimeout(() => { window.location.href = "upload.html"; }, 2000);
+                    } else {
+                        showAlert('Invalid email or password!', 'error');
+                    }
+                } else {
+                    showAlert('No users found!', 'error');
+                }
+            } catch (error) {
+                console.error('Error logging in:', error);
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        };
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alert');
+            alertBox.innerText = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            setTimeout(() => alertBox.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+
+</html>

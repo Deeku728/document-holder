@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure & Share Govt Document</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #75fffd, #7eb2ff, #fac4f2);
+            background-size: 300% 300%;
+            animation: bgAnimation 10s infinite alternate;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes bgAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .container:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            font-size: 30px;
+            color: #fff;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        p {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 25px;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 6px 18px rgba(255, 118, 136, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #ff7eb3, #ff758c);
+            transform: scale(1.06);
+            box-shadow: 0 10px 25px rgba(255, 118, 136, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Secure & Share Govt Document</h1>
+        <p>Safely store, manage, and share your important documents digitally.</p>
+        <div class="btn-container">
+            <a href="otp.html"><button>Register</button></a>
+            <a href="login.html"><button>Login</button></a>
+        </div>
+    </div>
+</body>
+
+</html>

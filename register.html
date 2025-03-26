@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #FFDEE9, #B5FFFC, #FF9A9E, #FAD0C4, #FBC2EB);
+            font-family: 'Poppins', sans-serif;
+            animation: gradientBG 10s ease infinite;
+            background-size: 400% 400%;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+        }
+
+        input {
+            background: #f0f0f0;
+        }
+
+        button {
+            background: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1> User Registration</h1>
+        <div id="alert" class="alert" style="display: none;"></div>
+        <input type="text" id="name" placeholder="Name">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <input type="tel" id="phone" placeholder="Phone Number">
+        <button id="registerButton" onclick="registerUser()">Register</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgnBadahlAkBQ0g0X72KJVdsLebBxSBKc",
+            authDomain: "documents-88731.firebaseapp.com",
+            projectId: "documents-88731",
+            storageBucket: "documents-88731.firebasestorage.app",
+            messagingSenderId: "872211037674",
+            appId: "1:872211037674:web:1d22955013e7ccfd018693",
+            measurementId: "G-6Q751M1T12"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.registerUser = async function () {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!name || !email || !password || !phone) {
+                showAlert('Please fill out all fields!', 'error');
+                return;
+            }
+
+            if (!/^[0-9]{10}$/.test(phone)) {
+                showAlert('Please enter a valid 10-digit phone number!', 'error');
+                return;
+            }
+
+            try {
+                const usersRef = ref(database, "users");
+                const newUserRef = push(usersRef);
+
+                await set(newUserRef, {
+                    name: name,
+                    email: email,
+                    password: password,
+                    phone: phone,
+                    registeredAt: new Date().toISOString()
+                });
+
+                showAlert('User registered successfully!', 'success');
+                window.location.href = "login.html"; // Redirect to the next page
+                clearForm();
+            } catch (error) {
+                console.error('Error registering user:', error);
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        };
+
+        function clearForm() {
+            document.querySelectorAll('input').forEach(input => input.value = '');
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alert');
+            alertBox.innerText = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            setTimeout(() => alertBox.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+
+</html>

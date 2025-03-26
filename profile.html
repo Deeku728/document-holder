@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #74ebd5, #acb6e5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    
+    .container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.15),
+                    -10px -10px 20px rgba(255, 255, 255, 0.6);
+        text-align: center;
+        width: 380px;
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    .container:hover {
+        transform: translateY(-5px);
+    }
+    
+    h2 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    
+    input {
+        width: 90%;
+        padding: 12px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 8px;
+        outline: none;
+        background: #f4f4f4;
+        box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.1),
+                    inset -4px -4px 8px rgba(255, 255, 255, 0.6);
+        font-size: 16px;
+        transition: all 0.3s ease-in-out;
+    }
+    
+    input:focus {
+        background: white;
+        box-shadow: 0 0 10px rgba(0, 0, 255, 0.3);
+    }
+    
+    .btn {
+        background: linear-gradient(135deg, #007BFF, #0056b3);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 15px;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2),
+                    -4px -4px 10px rgba(255, 255, 255, 0.6);
+    }
+    
+    .btn:hover {
+        background: linear-gradient(135deg, #0056b3, #003f7f);
+        transform: scale(1.05);
+    }
+    
+    #userData {
+        text-align: left;
+        margin-top: 20px;
+        padding: 10px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.1),
+                    inset -4px -4px 8px rgba(255, 255, 255, 0.6);
+        font-size: 16px;
+    }
+    
+    #statusMessage {
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 400px) {
+        .container {
+            width: 90%;
+            padding: 20px;
+        }
+    
+        input {
+            font-size: 14px;
+        }
+    
+        .btn {
+            font-size: 14px;
+        }
+    }
+</style>    
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>User Profile</h2>
+        <div>
+            <label for="emailInput">Enter Email:</label>
+            <input type="email" id="emailInput" placeholder="Enter Email">
+            <button class="btn" id="fetchUserBtn">Fetch Data</button>
+        </div>
+        <div id="userData">Enter Email and Click Fetch</div>
+        <p id="statusMessage"></p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // ✅ Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgnBadahlAkBQ0g0X72KJVdsLebBxSBKc",
+            authDomain: "documents-88731.firebaseapp.com",
+            databaseURL: "https://documents-88731-default-rtdb.firebaseio.com",
+            projectId: "documents-88731",
+            storageBucket: "documents-88731.appspot.com",
+            messagingSenderId: "872211037674",
+            appId: "1:872211037674:web:1d22955013e7ccfd018693",
+            measurementId: "G-6Q751M1T12"
+        };
+
+        // ✅ Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // ✅ Function to fetch user data by email
+        function fetchUserDataByEmail(email) {
+            if (!email) {
+                showMessage("❌ Please enter an Email!", "red");
+                return;
+            }
+
+            const usersRef = ref(database, "users");
+            get(usersRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const users = snapshot.val();
+                        let foundUser = null;
+
+                        // Loop through users to find a match
+                        Object.keys(users).forEach((key) => {
+                            if (users[key].email === email) {
+                                foundUser = users[key];
+                            }
+                        });
+
+                        if (foundUser) {
+                            displayUserData(foundUser);
+                        } else {
+                            showMessage("⚠️ No user data found for this email.", "red");
+                        }
+                    } else {
+                        showMessage("⚠️ No users found in the database.", "red");
+                    }
+                })
+                .catch((error) => {
+                    showMessage("❌ Error fetching data: " + error.message, "red");
+                });
+        }
+
+        // ✅ Function to display user data
+        function displayUserData(data) {
+            const userDataDiv = document.getElementById("userData");
+            userDataDiv.innerHTML = `
+                <p><strong>Name:</strong> ${data.name || "N/A"}</p>
+                <p><strong>Email:</strong> ${data.email || "N/A"}</p>
+                <p><strong>Phone:</strong> ${data.phone || "N/A"}</p>
+            `;
+        }
+
+        // ✅ Function to show status messages
+        function showMessage(message, color) {
+            const statusMessage = document.getElementById("statusMessage");
+            statusMessage.innerText = message;
+            statusMessage.style.color = color;
+        }
+
+        // ✅ Button Click Event to Fetch Data by Email
+        document.getElementById("fetchUserBtn").addEventListener("click", () => {
+            const email = document.getElementById("emailInput").value.trim();
+            fetchUserDataByEmail(email);
+        });
+
+    </script>
+
+</body>
+</html>
