@@ -50,5 +50,4 @@ This project is a secure platform for storing and sharing government documents w
 ## License
 This project is open-source and available under the **MIT License**.
 
-## Contact
-For queries, reach out at [your.email@example.com](mailto:your.email@example.com).
+
